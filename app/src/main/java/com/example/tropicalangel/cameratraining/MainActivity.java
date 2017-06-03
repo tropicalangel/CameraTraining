@@ -13,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
@@ -32,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements Camera.ErrorCallb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.camera_preview);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements Camera.ErrorCallb
     private void addChildView(){
         mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
+        preview.addView(mPreview,0);
 
         Button pictureButton = (Button) findViewById(R.id.button_capture);
         pictureButton.setOnClickListener(new View.OnClickListener() {
@@ -76,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements Camera.ErrorCallb
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             return true;
         } else {
-            Log.e("check_Camera", "do not");
             return false;
         }
     }
@@ -108,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements Camera.ErrorCallb
             } catch (IOException e) {
                 Log.d("onPictureTaken", "Error accessing file: " + e.getMessage());
             }
+            mCamera.startPreview();
         }
     };
 
